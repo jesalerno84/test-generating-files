@@ -1,0 +1,24 @@
+name: Push Changes to Shopify
+
+on:
+  # Anytime a change is pushed to any branch
+  push:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  SHOPIFY_HOST: 'shop1.myshopify.io'
+  SHOPIFY_PASSWORD: 'd63e0d07b1e2483b00de67dd4bec8181'
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: npm ci
+      - run: .github/bin/shopify-website init ${GITHUB_REF##*/}
+      - run: .github/bin/shopify-website push --theme=${GITHUB_REF##*/} --verbose
+
